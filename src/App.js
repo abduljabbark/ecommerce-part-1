@@ -8,7 +8,7 @@ import Product from './product';
 function App() {
   return (
     <div className="App">
-      <Header />
+
       <Product />
     </div>
   );

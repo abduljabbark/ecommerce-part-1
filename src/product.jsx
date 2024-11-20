@@ -1,4 +1,4 @@
-import { Box, Divider, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, CircularProgress, Divider, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -7,11 +7,20 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Product = () => {
     const [CartList, setCartList] = useState([]);
     const [operAlert, setOperAlert] = useState(false);
     const [products, setProducts] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const navigate = useNavigate();
+
+
+    console.log(isLoading, "isLoading");
+
+
 
     const cartHandler = (product) => {
         const isExist = CartList.find((cart) => cart.id === product.id);
@@ -35,8 +44,24 @@ const Product = () => {
     useEffect(() => {
         const fetchproducts = async () => {
             try {
-                const products = await axios.get("https://fakestoreapi.com/products");
-                setProducts(products?.data);
+                setIsLoading(true)
+                const productsData = await axios.get("https://fakestoreapi.com/products");
+                console.log(productsData, "products");
+
+
+
+
+
+                if (productsData.status === 200) {
+                    setIsLoading(false);
+                    setProducts(productsData?.data);
+                } else (
+                    setIsLoading(true)
+                )
+
+
+
+
             } catch (err) {
                 console.log(err);
             }
@@ -47,10 +72,10 @@ const Product = () => {
     return (
         <>
             <Box className="container mt-3">
-                <TextField 
-                    onChange={searchHandler} 
-                    size="small" 
-                    placeholder="Search Items ..." 
+                <TextField
+                    onChange={searchHandler}
+                    size="small"
+                    placeholder="Search Items ..."
                     variant="outlined"
                     sx={{ width: '100%', maxWidth: 500, margin: 'auto', mb: 3 }}
                 />
@@ -75,56 +100,68 @@ const Product = () => {
                 />
             </Snackbar>
 
-            <Box className="container d-flex flex-wrap justify-content-center gap-4 mt-4 mb-5">
-                {products.map((product, index) => (
-                    <Box
-                        key={index}
-                        className="shadow p-3"
-                        sx={{
-                            width: 220,
-                            height: 350,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            borderRadius: 3,
-                            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                                transform: 'scale(1.05)',
-                                boxShadow: '0 6px 12px rgba(0,0,0,0.2)',
-                            },
-                        }}
-                    >
-                        <img 
-                            src={product.image} 
-                            alt={product.name} 
-                            style={{ height: "180px", objectFit: "contain" }} 
-                            className="img-fluid"
-                        />
-                        <Tooltip title={product.title} placement="top">
-                            <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 'bold', marginTop: 1 }}>
-                                {product.title.length > 20 ? `${product.title.slice(0, 17)}...` : product.title}
-                            </Typography>
-                        </Tooltip>
-                        <Divider sx={{ my: 1, borderColor: "black" }} />
-                        <Box className="d-flex justify-content-around mt-2">
-                            <Tooltip title="View Details">
-                                <VisibilityIcon color="primary" sx={{ cursor: "pointer" }} />
-                            </Tooltip>
-                            <Tooltip title="Add to Favorites">
-                                <FavoriteIcon color="secondary" sx={{ cursor: "pointer" }} />
-                            </Tooltip>
-                            <Tooltip title="Add to Cart">
-                                <AddShoppingCartIcon 
-                                    color="action" 
-                                    sx={{ cursor: "pointer", color: "#00c853" }}
-                                    onClick={() => cartHandler(product)}
+            {isLoading ? (<Box className="text-center">
+                <CircularProgress color="success" /> </Box>) :
+                (<Box className="container d-flex flex-wrap justify-content-center gap-4 mt-4 mb-5">
+                    {products.map((product, index) => (
+                        <>
+                            <Box
+                                key={index}
+                                className="shadow p-3"
+                                sx={{
+                                    width: 220,
+                                    height: 350,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    justifyContent: "space-between",
+                                    borderRadius: 3,
+                                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                                    transition: 'transform 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)',
+                                        boxShadow: '0 6px 12px rgba(0,0,0,0.2)',
+                                    },
+                                }}
+                            >
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    style={{ height: "180px", objectFit: "contain" }}
+                                    className="img-fluid"
                                 />
-                            </Tooltip>
-                        </Box>
-                    </Box>
-                ))}
-            </Box>
+                                <Tooltip title={product.title} placement="top">
+                                    <Typography variant="h6" sx={{ fontSize: "1rem", fontWeight: 'bold', marginTop: 1 }}>
+                                        {product.title.length > 20 ? `${product.title.slice(0, 17)}...` : product.title}
+                                    </Typography>
+                                </Tooltip>
+                                <Divider sx={{ my: 1, borderColor: "black" }} />
+                                {<Box className="d-flex justify-content-around mt-2">
+                                    <Tooltip title="View Details">
+                                        <VisibilityIcon onClick={()=> {
+                                            navigate(`/ProductDetails/${product?.id}`);
+                                  
+                                        
+                                        }}
+                                        
+                                        color="primary" sx={{ cursor: "pointer" }} />
+                                    </Tooltip>
+                                    <Tooltip title="Add to Favorites">
+                                        <FavoriteIcon color="secondary" sx={{ cursor: "pointer" }} />
+                                    </Tooltip>
+                                    <Tooltip title="Add to Cart">
+                                        <AddShoppingCartIcon
+                                            color="action"
+                                            sx={{ cursor: "pointer", color: "#00c853" }}
+                                            onClick={() => cartHandler(product)}
+                                        />
+                                    </Tooltip>
+                                </Box>}
+                            </Box>
+
+                        </>
+                    ))}
+                </Box>)}
+
         </>
     );
 };
