@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Divider, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
+import { Autocomplete, Box, CircularProgress, Divider, Snackbar, SnackbarContent, TextField, Tooltip, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -8,17 +8,21 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Category } from '@mui/icons-material';
+
 
 const Product = () => {
     const [CartList, setCartList] = useState([]);
     const [operAlert, setOperAlert] = useState(false);
+    const [allProducts, setAllProducts] = useState([]);
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+const [ categoryOption, setCategoryOption] = useState([]);
+const [categoryFilter, setCategoryFilter]= useState({});
 
     const navigate = useNavigate();
 
 
-    console.log(isLoading, "isLoading");
 
 
 
@@ -46,8 +50,6 @@ const Product = () => {
             try {
                 setIsLoading(true)
                 const productsData = await axios.get("https://fakestoreapi.com/products");
-                console.log(productsData, "products");
-
 
 
 
@@ -55,6 +57,20 @@ const Product = () => {
                 if (productsData.status === 200) {
                     setIsLoading(false);
                     setProducts(productsData?.data);
+                    setAllProducts(productsData?.data);
+                    const filterCategories = productsData?.data?.map((product) => {
+                        return {
+                            label: product?.category,
+                            value: product?.category
+                        };
+
+                    });
+                    const uniqueCaregories = filterCategories.filter((item,index,self)=> index ===self.findIndex((i)=> i.value === item.value))
+                    
+                    setCategoryOption(uniqueCaregories)
+                    
+
+
                 } else (
                     setIsLoading(true)
                 )
@@ -69,9 +85,20 @@ const Product = () => {
         fetchproducts();
     }, []);
 
+useEffect(()=> {
+   let filteredProducts = allProducts?.filter((product)=> product?.category === categoryFilter?.value)
+
+
+   setProducts(filteredProducts)
+   console.log(filteredProducts,'filteredProducts');
+
+
+},[categoryFilter])
+
+
     return (
         <>
-            <Box className="container mt-3">
+            <Box className="container mt-3 d-flex justify-content-between">
                 <TextField
                     onChange={searchHandler}
                     size="small"
@@ -79,6 +106,16 @@ const Product = () => {
                     variant="outlined"
                     sx={{ width: '100%', maxWidth: 500, margin: 'auto', mb: 3 }}
                 />
+                <Autocomplete
+                    size='small'
+                    disablePortal
+                    options={categoryOption}
+                    onChange={(e,newValue)=>{setCategoryFilter(newValue);
+                    }}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => <TextField {...params} label="Categories" />}
+                />
+
             </Box>
 
             <Snackbar
@@ -137,13 +174,13 @@ const Product = () => {
                                 <Divider sx={{ my: 1, borderColor: "black" }} />
                                 {<Box className="d-flex justify-content-around mt-2">
                                     <Tooltip title="View Details">
-                                        <VisibilityIcon onClick={()=> {
+                                        <VisibilityIcon onClick={() => {
                                             navigate(`/ProductDetails/${product?.id}`);
-                                  
-                                        
+
+
                                         }}
-                                        
-                                        color="primary" sx={{ cursor: "pointer" }} />
+
+                                            color="primary" sx={{ cursor: "pointer" }} />
                                     </Tooltip>
                                     <Tooltip title="Add to Favorites">
                                         <FavoriteIcon color="secondary" sx={{ cursor: "pointer" }} />
