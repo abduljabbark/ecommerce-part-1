@@ -7,6 +7,8 @@ import SignUp from './sign-up/SignUp';
 import SignIn from './sign-in/SignIn';
 import ProductDetails from './Productdetails/productDetails';
 import MainLayout from './layout/MainLayout';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 
 
@@ -51,7 +53,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
     
-    <RouterProvider router={router} />
  
 );

@@ -8,33 +8,34 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Category } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { addToCart } from './slices/add-cart/AddCartSlice';
 
 
 const Product = () => {
-    const [CartList, setCartList] = useState([]);
+    // const [CartList, setCartList] = useState([]);
     const [operAlert, setOperAlert] = useState(false);
     const [allProducts, setAllProducts] = useState([]);
     const [products, setProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-const [ categoryOption, setCategoryOption] = useState([]);
-const [categoryFilter, setCategoryFilter]= useState({});
+    const [categoryOption, setCategoryOption] = useState([]);
+    const [categoryFilter, setCategoryFilter] = useState({});
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
 
 
 
+    // const cartHandler = (product) => {
+    //     const isExist = CartList.find((cart) => cart.id === product.id);
 
-    const cartHandler = (product) => {
-        const isExist = CartList.find((cart) => cart.id === product.id);
-
-        if (!isExist) {
-            setCartList((prev) => [...prev, product]);
-        } else {
-            setOperAlert(true);
-        }
-    };
+    //     if (!isExist) {
+    //         setCartList((prev) => [...prev, product]);
+    //     } else {
+    //         setOperAlert(true);
+    //     }
+    // };
 
     const handleClose = () => {
         setOperAlert(false);
@@ -65,10 +66,10 @@ const [categoryFilter, setCategoryFilter]= useState({});
                         };
 
                     });
-                    const uniqueCaregories = filterCategories.filter((item,index,self)=> index ===self.findIndex((i)=> i.value === item.value))
-                    
+                    const uniqueCaregories = filterCategories.filter((item, index, self) => index === self.findIndex((i) => i.value === item.value))
+
                     setCategoryOption(uniqueCaregories)
-                    
+
 
 
                 } else (
@@ -85,15 +86,15 @@ const [categoryFilter, setCategoryFilter]= useState({});
         fetchproducts();
     }, []);
 
-useEffect(()=> {
-   let filteredProducts = allProducts?.filter((product)=> product?.category === categoryFilter?.value)
+    useEffect(() => {
+        let filteredProducts = allProducts?.filter((product) => product?.category === categoryFilter?.value)
 
 
-   setProducts(filteredProducts)
-   console.log(filteredProducts,'filteredProducts');
+        setProducts(filteredProducts)
+        console.log(filteredProducts, 'filteredProducts');
 
 
-},[categoryFilter])
+    }, [categoryFilter])
 
 
     return (
@@ -110,7 +111,8 @@ useEffect(()=> {
                     size='small'
                     disablePortal
                     options={categoryOption}
-                    onChange={(e,newValue)=>{setCategoryFilter(newValue);
+                    onChange={(e, newValue) => {
+                        setCategoryFilter(newValue);
                     }}
                     sx={{ width: 300 }}
                     renderInput={(params) => <TextField {...params} label="Categories" />}
@@ -186,10 +188,10 @@ useEffect(()=> {
                                         <FavoriteIcon color="secondary" sx={{ cursor: "pointer" }} />
                                     </Tooltip>
                                     <Tooltip title="Add to Cart">
-                                        <AddShoppingCartIcon
+                                        <AddShoppingCartIcon onClick={()=>dispatch(addToCart())}
                                             color="action"
                                             sx={{ cursor: "pointer", color: "#00c853" }}
-                                            onClick={() => cartHandler(product)}
+                                            // onClick={() => cartHandler(product)}
                                         />
                                     </Tooltip>
                                 </Box>}

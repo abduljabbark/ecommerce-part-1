@@ -17,6 +17,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Cartlist from './cartList';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -64,7 +65,11 @@ export default function Header() {
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
     const [open, setOpen] = useState(false);
     const [CartItems, setCartItems] = useState([]);
-    
+    const count = useSelector((state)=> state.counter)
+
+console.log(count,'count');
+
+
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
@@ -130,7 +135,7 @@ export default function Header() {
         >
             <MenuItem>
                 <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                    <Badge badgeContent={1} color="error">
+                    <Badge badgeContent={count?.value} color="error">
                         <ShoppingCartIcon onClick={toggleDrawer(true)}/>
                     </Badge>
                 </IconButton>
@@ -195,7 +200,7 @@ export default function Header() {
                     <Box sx={{ flexGrow: 1 }} />
                     <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                            <Badge badgeContent={CartItems?.length} color="error">
+                            <Badge badgeContent={count?.value} color="error">
                                 <ShoppingCartIcon  onClick={toggleDrawer(true)}/>
                             </Badge>
                         </IconButton>
