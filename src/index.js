@@ -8,6 +8,7 @@ import SignIn from './sign-in/SignIn';
 import ProductDetails from './Productdetails/productDetails';
 import MainLayout from './layout/MainLayout';
 import { Provider } from 'react-redux';
+import 'react-toastify/dist/ReactToastify.css';
 import { store } from './store';
 
 

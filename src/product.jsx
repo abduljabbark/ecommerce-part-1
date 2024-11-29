@@ -8,8 +8,10 @@ import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from './slices/add-cart/AddCartSlice';
+import { ToastContainer, toast } from 'react-toastify';
+import { addproduct } from './slices/product/productsSlice';
 
 
 const Product = () => {
@@ -22,8 +24,11 @@ const Product = () => {
     const [categoryFilter, setCategoryFilter] = useState({});
 
     const navigate = useNavigate();
+
+    const { isToast } = useSelector((state) => state.products)
     const dispatch = useDispatch();
 
+    console.log(isToast, 'toast');
 
 
 
@@ -47,6 +52,10 @@ const Product = () => {
     };
 
     useEffect(() => {
+
+
+
+
         const fetchproducts = async () => {
             try {
                 setIsLoading(true)
@@ -96,10 +105,16 @@ const Product = () => {
 
     }, [categoryFilter])
 
-
+    useEffect(() => {
+        if (isToast) {
+            toast("Product already added!");
+        }
+    }, [isToast])
     return (
         <>
+            <ToastContainer />
             <Box className="container mt-3 d-flex justify-content-between">
+
                 <TextField
                     onChange={searchHandler}
                     size="small"
@@ -143,6 +158,8 @@ const Product = () => {
                 <CircularProgress color="success" /> </Box>) :
                 (<Box className="container d-flex flex-wrap justify-content-center gap-4 mt-4 mb-5">
                     {products.map((product, index) => (
+
+
                         <>
                             <Box
                                 key={index}
@@ -188,10 +205,10 @@ const Product = () => {
                                         <FavoriteIcon color="secondary" sx={{ cursor: "pointer" }} />
                                     </Tooltip>
                                     <Tooltip title="Add to Cart">
-                                        <AddShoppingCartIcon onClick={()=>dispatch(addToCart())}
+                                        <AddShoppingCartIcon onClick={() => dispatch(addproduct(product))}
                                             color="action"
                                             sx={{ cursor: "pointer", color: "#00c853" }}
-                                            // onClick={() => cartHandler(product)}
+                                        // onClick={() => cartHandler(product)}
                                         />
                                     </Tooltip>
                                 </Box>}
