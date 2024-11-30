@@ -25,22 +25,9 @@ const Product = () => {
 
     const navigate = useNavigate();
 
-    const { isToast } = useSelector((state) => state.products)
+    const { isToast,isProductAdded } = useSelector((state) => state.products)
     const dispatch = useDispatch();
 
-    console.log(isToast, 'toast');
-
-
-
-    // const cartHandler = (product) => {
-    //     const isExist = CartList.find((cart) => cart.id === product.id);
-
-    //     if (!isExist) {
-    //         setCartList((prev) => [...prev, product]);
-    //     } else {
-    //         setOperAlert(true);
-    //     }
-    // };
 
     const handleClose = () => {
         setOperAlert(false);
@@ -100,7 +87,6 @@ const Product = () => {
 
 
         setProducts(filteredProducts)
-        console.log(filteredProducts, 'filteredProducts');
 
 
     }, [categoryFilter])
@@ -109,7 +95,10 @@ const Product = () => {
         if (isToast) {
             toast("Product already added!");
         }
-    }, [isToast])
+        if (isProductAdded) {
+            toast("Product added successfully!");
+        }
+    }, [isToast,isProductAdded ])
     return (
         <>
             <ToastContainer />
@@ -208,7 +197,6 @@ const Product = () => {
                                         <AddShoppingCartIcon onClick={() => dispatch(addproduct(product))}
                                             color="action"
                                             sx={{ cursor: "pointer", color: "#00c853" }}
-                                        // onClick={() => cartHandler(product)}
                                         />
                                     </Tooltip>
                                 </Box>}

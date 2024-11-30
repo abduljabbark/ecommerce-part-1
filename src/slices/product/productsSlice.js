@@ -5,6 +5,7 @@ const productSlice = createSlice({
     initialState: {
         items: [],
         isToast: false,
+        isProductAdded:false
     },
     reducers: {
         addproduct: (state, action) => {
@@ -17,6 +18,8 @@ const productSlice = createSlice({
             if (isExist) {
                 state.isToast = true
             } else {
+                state.isToast = false;
+                state.isProductAdded = true;
                 state.items.push({ ...action.payload, quantity:1});
             }
         },
@@ -38,7 +41,10 @@ const productSlice = createSlice({
         
             
         },
+        removeItem:(state, action)=>{
+state.items= state.items.filter((item)=>item?.id !== action.payload.id)
+       },
     }
 });
-export const { addproduct, increaseQuantity, decreaseQuantity} = productSlice.actions;
+export const { addproduct, increaseQuantity, decreaseQuantity,removeItem} = productSlice.actions;
 export default productSlice.reducer;
